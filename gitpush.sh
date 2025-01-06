@@ -21,7 +21,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # 推送更改到master分支
-git push origin master
+git push
 if [ $? -ne 0 ]; then
     echo "Failed to push changes. Exiting."
     exit 1
