@@ -13,5 +13,3 @@ gfcli:
       tables: "userdata" # 指定当前数据库中需要执行代码生成的数据表。如果为空，表示数据库的所有表都会生成。
       debug: true
       jsonCase: "CamelLower" # JSON字段命名方式，如CamelLower、SnakeLower等
-
-      # mysql -uroot -p123dqz -P 3306 -D TechStack < 1.sql
