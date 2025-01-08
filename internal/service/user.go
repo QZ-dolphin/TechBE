@@ -14,6 +14,7 @@ type (
 	IUser interface {
 		GetData(ctx context.Context, username string) (userdata *v1.Userdata)
 		SaveData(ctx context.Context, username string, userdata string)
+		Login(ctx context.Context, username string, email string, password string) (exits bool, pass bool, dup bool)
 	}
 )
 

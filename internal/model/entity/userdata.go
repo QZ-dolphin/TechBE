@@ -9,6 +9,8 @@ type Userdata struct {
 	Id        uint   `json:"id"        orm:"id"         ` //
 	Username  string `json:"username"  orm:"username"   ` //
 	Email     string `json:"email"     orm:"email"      ` //
+	Password  string `json:"password"  orm:"password"   ` //
+	ClientIp  string `json:"clientIp"  orm:"client_ip"  ` //
 	Stackdata string `json:"stackdata" orm:"stackdata"  ` //
 	CreatedAt uint   `json:"createdAt" orm:"created_at" ` //
 	UpdatedAt uint   `json:"updatedAt" orm:"updated_at" ` //

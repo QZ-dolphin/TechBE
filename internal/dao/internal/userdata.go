@@ -23,6 +23,8 @@ type UserdataColumns struct {
 	Id        string //
 	Username  string //
 	Email     string //
+	Password  string //
+	ClientIp  string //
 	Stackdata string //
 	CreatedAt string //
 	UpdatedAt string //
@@ -33,6 +35,8 @@ var userdataColumns = UserdataColumns{
 	Id:        "id",
 	Username:  "username",
 	Email:     "email",
+	Password:  "password",
+	ClientIp:  "client_ip",
 	Stackdata: "stackdata",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",

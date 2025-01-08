@@ -2,14 +2,21 @@
 # CLI tool, only in development environment.
 # https://goframe.org/pages/viewpage.action?pageId=3673173
 gfcli:
+  build:
+    name: "gf"
+    arch: "amd64"
+    system: "linux"
+    packSrc: "manifest"
+    output: "./main"
+
   docker:
     build: "-a amd64 -s linux -p temp -ew"
-    tagPrefixes:
-      - my.image.pub/my-app
+    # tagPrefixes:
+    #   - my.image.pub/my-app
 
   gen:
     dao:
-    - link: "mysql:root:123456@tcp(127.0.0.1:3306)/TechStack?loc=Local&parseTime=true"
+    - link: "mysql:root:123456@tcp(192.168.56.101:3306)/TechStack?loc=Local&parseTime=true"
       tables: "userdata" # 指定当前数据库中需要执行代码生成的数据表。如果为空，表示数据库的所有表都会生成。
       debug: true
       jsonCase: "CamelLower" # JSON字段命名方式，如CamelLower、SnakeLower等

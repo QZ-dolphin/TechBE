@@ -14,6 +14,8 @@ type Userdata struct {
 	Id        interface{} //
 	Username  interface{} //
 	Email     interface{} //
+	Password  interface{} //
+	ClientIp  interface{} //
 	Stackdata interface{} //
 	CreatedAt interface{} //
 	UpdatedAt interface{} //
