@@ -11,7 +11,7 @@ import (
 
 func (c *ControllerV1) Data(ctx context.Context, req *v1.DataReq) (res *v1.DataRes, err error) {
 	res = &v1.DataRes{}
-	userdata := service.User().GetData(ctx, req.Name)
+	userdata := service.User().GetData(ctx, req.Name, req.Password)
 	if userdata == nil {
 		g.RequestFromCtx(ctx).Response.Writeln("no userdata of ", req.Name)
 		return

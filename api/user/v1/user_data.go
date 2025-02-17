@@ -6,8 +6,9 @@ import (
 )
 
 type DataReq struct {
-	g.Meta `path:"/userdata" method:"get"`
-	Name   string `p:"username"`
+	g.Meta   `path:"/userdata" method:"post"`
+	Name     string `p:"username"`
+	Password string `p:"password"`
 }
 
 type DataRes struct {
@@ -15,7 +16,8 @@ type DataRes struct {
 }
 
 type Userdata struct {
-	Data  string      `json:"stackdata"`
-	CTime *gtime.Time `json:"created_at"`
-	UTime *gtime.Time `json:"updated_at"`
+	Stackdata   string      `json:"stackdata"`
+	Avatar_path string      `json:"avatar_path"`
+	Created_at  *gtime.Time `json:"created_at"`
+	Updated_at  *gtime.Time `json:"updated_at"`
 }

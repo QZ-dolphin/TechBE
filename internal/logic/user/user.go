@@ -3,8 +3,10 @@ package user
 import (
 	v1 "TechBE/api/user/v1"
 	"TechBE/internal/service"
+	"TechBE/utility"
 	"context"
 
+	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -18,22 +20,29 @@ func New() service.IUser {
 	return &sUser{}
 }
 
-func (s *sUser) GetData(ctx context.Context, username string) (userdata *v1.Userdata) {
-	md := g.Model("userdata")
-	md.Where("username", username).Scan(&userdata)
-	// utility.Clog(userdata)
-	if userdata == nil {
-		// utility.Clog("\n Empty")
+func (s *sUser) GetData(ctx context.Context, username string, password string) (userdata *v1.Userdata) {
+	md := g.Model("userdata").Safe()
+	if legal_op(md, username, password) {
+		md.Where("username", username).Scan(&userdata)
 	}
+	// utility.Clog(userdata)
+	// if userdata == nil {
+	// 	utility.Clog("\n Empty")
+	// }
 	return
 }
 
-func (s *sUser) SaveData(ctx context.Context, username string, userdata string) {
+func (s *sUser) SaveData(ctx context.Context, username string, password string, userdata string) {
 	data := g.Map{
 		"stackdata": userdata,
 	}
-	md := g.Model("userdata")
+	md := g.Model("userdata").Safe()
+	if !legal_op(md, username, password) {
+		return
+	}
 	md.Where("username", username).Update(data)
+	clientIP := g.RequestFromCtx(ctx).GetClientIp()
+	md.Where("username", username).Update(g.Map{"client_ip": clientIP})
 }
 
 func (s *sUser) Login(ctx context.Context, username string, email string, password string) (exits bool, pass bool, dup bool) {
@@ -45,10 +54,12 @@ func (s *sUser) Login(ctx context.Context, username string, email string, passwo
 			return
 		} else {
 			ps, _ := md.Fields("password").Where("username", username).Value()
-			if ps.String() == password {
-				ip, _ := md.Fields("client_ip").Where("username", username).Value()
-				if ip.String() != clientIP {
-					md.Where("username", username).Update(g.Map{"client_ip": clientIP})
+			x_pass, _ := utility.Crypt.Decrypt(ps.String())
+			// utility.Clog("\nx_pass", x_pass, "\npassword", password, "\nps.String()", ps.String())
+			if ps.String() == password || password == x_pass {
+				if ps.String() == password {
+					d_pass, _ := utility.Crypt.Encrypt(password)
+					md.Where("username", username).Update(g.Map{"password": d_pass})
 				}
 				pass = true
 				return
@@ -65,6 +76,7 @@ func (s *sUser) Login(ctx context.Context, username string, email string, passwo
 		exits = true
 		pass = true
 		dup = true
+		password, _ = utility.Crypt.Encrypt(password)
 		data := g.Map{
 			"username":  username,
 			"email":     email,
@@ -74,4 +86,17 @@ func (s *sUser) Login(ctx context.Context, username string, email string, passwo
 		md.Insert(data)
 	}
 	return
+}
+
+func legal_op(md *gdb.Model, username string, password string) bool {
+	exits, _ := md.Where("username", username).Exist()
+	if !exits {
+		return false
+	}
+	ps, _ := md.Fields("password").Where("username", username).Value()
+	x_pass, _ := utility.Crypt.Decrypt(ps.String())
+	if ps.String() == password || password == x_pass {
+		return true
+	}
+	return false
 }

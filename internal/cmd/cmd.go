@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
+	"TechBE/internal/controller/ctrl"
 	"TechBE/internal/controller/user"
 	"TechBE/internal/service"
 )
@@ -23,6 +24,7 @@ var (
 				group.Middleware(service.Middleware().Response)
 				group.Bind(
 					user.NewV1(),
+					ctrl.NewV1(),
 				)
 			})
 			s.Run()
