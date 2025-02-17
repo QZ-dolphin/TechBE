@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 
 	"TechBE/internal/controller/ctrl"
+	"TechBE/internal/controller/system"
 	"TechBE/internal/controller/user"
 	"TechBE/internal/service"
 )
@@ -25,6 +26,7 @@ var (
 				group.Bind(
 					user.NewV1(),
 					ctrl.NewV1(),
+					system.NewV1(),
 				)
 			})
 			s.Run()
