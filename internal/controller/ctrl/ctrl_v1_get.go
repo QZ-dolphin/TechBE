@@ -11,7 +11,7 @@ import (
 
 func (c *ControllerV1) Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {
 	res = new(v1.GetRes)
-	if req.Password == "123dqz" {
+	if req.Password == g.Cfg().MustGet(ctx, "ctrl.password").String() {
 		res.UserData = service.Ctrl().GetUserData()
 	} else {
 		g.RequestFromCtx(ctx).Response.Writeln("Wrong user login!")
