@@ -13,7 +13,8 @@ type (
 	ISystem interface {
 		GetVerifyImgString(ctx context.Context) (idKeyC string, base64stringC string, err error)
 		VerifyCaptcha(ctx context.Context, idKey string, captcha string) bool
-		EmailCodeSend(ctx context.Context, to string, code string) bool
+		EmailCodeSend(ctx context.Context, to string, code string) (exits bool, send bool, ttl int64)
+		EmailCodeVerify(ctx context.Context, to string, code string) bool
 	}
 )
 

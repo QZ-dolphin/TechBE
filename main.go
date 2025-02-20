@@ -5,6 +5,7 @@ import (
 	_ "TechBE/internal/packed"
 
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
+	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 
 	"TechBE/internal/cmd"
 

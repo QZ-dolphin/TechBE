@@ -8,5 +8,7 @@ type EmailCodeGetReq struct {
 }
 
 type EmailCodeGetRes struct {
-	Send bool `p:"send"`
+	TTL   int64 `json:"ttl"` // 验证码有效时间，单位秒
+	Send  bool  `json:"send"`
+	Exits bool  `json:"exits"`
 }

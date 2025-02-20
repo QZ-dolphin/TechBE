@@ -46,7 +46,21 @@ func (s *sSystem) VerifyCaptcha(ctx context.Context, idKey, captcha string) bool
 	return store.Verify(idKey, captcha, true)
 }
 
-func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) bool {
+func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) (exits, send bool, ttl int64) {
+	md := g.Model("userdata").Safe()
+	exits, _ = md.Where("email", to).Exist()
+	utility.Clog(to, exits)
+	if exits {
+		return
+	}
+
+	key := "verification_code:" + to
+	value, _ := g.Redis().Get(ctx, key)
+	if !value.IsNil() {
+		ttl, _ = g.Redis().TTL(ctx, key)
+		return false, true, ttl
+	}
+
 	smtpHost := g.Cfg().MustGet(ctx, "smtp.host").String()
 	smtpPort := g.Cfg().MustGet(ctx, "smtp.port").Int()
 	senderEmail := g.Cfg().MustGet(ctx, "smtp.email").String()
@@ -71,17 +85,17 @@ func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) boo
 	<body>
 		<div class="container">
 			<div class="header">您的 TechStack 验证码</div>
-			<p>请使用以下验证码完成验证：</p>
+			<p>请使用以下验证码完成验证：</p >
 			<div class="code">%s</div>
-			<p>请在 <strong>5 分钟</strong> 内使用，否则验证码将失效。</p>
+			<p>请在 <strong>5 分钟</strong> 内使用，否则验证码将失效。</p >
 			<div class="footer">如果您未请求此验证码，请忽略此邮件。</div>
 			<div class="signature">
 				<hr>
 				<p>
 					由 <strong>TechStack</strong> 提供支持<br>
-					官网: <a href="http://113.45.183.72/">Tech-Stack</a><br>
-					邮箱: <a href="mailto:dearqueenszeal@163.com">dearqueenszeal@163.com</a>
-				</p>
+					官网: Tech-Stack<br>
+					邮箱: 
+				</p >
 			</div>
 		</div>
 	</body>
@@ -102,6 +116,18 @@ func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) boo
 	err := d.DialAndSend(m)
 	if err != nil {
 		utility.Clog(err)
+		return
 	}
-	return err == nil
+
+	g.Redis().SetEX(ctx, key, code, 60*5)
+	return false, true, 60 * 5
+}
+
+func (s *sSystem) EmailCodeVerify(ctx context.Context, to string, code string) bool {
+	key := "verification_code:" + to
+	value, _ := g.Redis().Get(ctx, key)
+	if value.IsNil() {
+		return false
+	}
+	return value.String() == code
 }
