@@ -13,6 +13,8 @@ type (
 	IMiddleware interface {
 		CORS(r *ghttp.Request)
 		Response(r *ghttp.Request)
+		// 限流中间件
+		RateLimit(r *ghttp.Request)
 	}
 )
 

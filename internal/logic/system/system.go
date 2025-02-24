@@ -57,6 +57,7 @@ func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) (ex
 	key := "verification_code:" + to
 	value, _ := g.Redis().Get(ctx, key)
 	if !value.IsNil() {
+		utility.Clog("2222")
 		ttl, _ = g.Redis().TTL(ctx, key)
 		return false, true, ttl
 	}
@@ -119,7 +120,10 @@ func (s *sSystem) EmailCodeSend(ctx context.Context, to string, code string) (ex
 		return
 	}
 
-	g.Redis().SetEX(ctx, key, code, 60*5)
+	err = g.Redis().SetEX(ctx, key, code, 60*5)
+	if err != nil {
+		utility.Clog(err)
+	}
 	return false, true, 60 * 5
 }
 
@@ -127,7 +131,9 @@ func (s *sSystem) EmailCodeVerify(ctx context.Context, to string, code string) b
 	key := "verification_code:" + to
 	value, _ := g.Redis().Get(ctx, key)
 	if value.IsNil() {
+		utility.Clog("1111")
 		return false
 	}
+	utility.Clog(value.String, code)
 	return value.String() == code
 }

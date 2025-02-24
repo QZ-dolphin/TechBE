@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.8.3
 	github.com/mojocn/base64Captcha v1.3.1
 	github.com/tjfoc/gmsm v1.4.1
+	golang.org/x/time v0.10.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )
 
